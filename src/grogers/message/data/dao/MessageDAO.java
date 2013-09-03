@@ -44,6 +44,7 @@ public class MessageDAO extends BaseDAO<MessageBean,ObjectId> {
 
         query.offset(offset);
         query.limit(limit);
+        query.order("-createdAt");  // newest first
         
         List<MessageBean> messages = query.asList();
         return messages;
