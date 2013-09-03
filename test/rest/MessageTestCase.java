@@ -1,5 +1,7 @@
 package rest;
 
+import java.util.List;
+
 import grogers.message.data.GroupBean;
 import grogers.message.data.MessageBean;
 import grogers.message.data.NamedReference;
@@ -13,7 +15,9 @@ import org.json.JSONException;
 
 public class MessageTestCase extends BaseTestCase {
     
+    // Not so much a test case as a test scenario....
     public void testSending() throws JSONException {
+        // Create users and group
         UserBean receiver = createUser();
         UserBean groupReceiver = createUser();
         UserBean sender = createUser();
@@ -24,9 +28,11 @@ public class MessageTestCase extends BaseTestCase {
         sender.getGroupRefs().add(groupRef);
         sender = updateUser(sender, Status.OK.getStatusCode());
         
+        // Save a draft message
         String content = "你好世界";
         MessageBean message = createMessage(sender, receiver, group, MessageBean.MessageStatus.draft, content, Status.OK.getStatusCode());
         
+        // Verify message exists and is correct
         MessageBean message2 = getMessageById(message.getId(), Status.OK.getStatusCode());
         assertEquals(message.getReceiver(), message2.getReceiver());
         assertEquals(message.getSender(), message2.getSender());
@@ -35,10 +41,16 @@ public class MessageTestCase extends BaseTestCase {
         assertEquals(content, message2.getContent());
         assertEquals(message.getStatus(), message2.getStatus());
         
+        // Change status to send causing the message to get sent to receiver and group members.
         message = message2;
         message.setStatus(MessageStatus.send);
         message2 = updateMessage(message, Status.OK.getStatusCode());
         assertEquals(MessageStatus.sent, message2.getStatus());
-        
+
+        // Search for messages for the receivers to validate delivery.
+        List<MessageBean> messages = searchMessages(receiver, MessageStatus.unread, 1);
+        messages = searchMessages(groupReceiver, MessageStatus.unread, 1);
+        messages = searchMessages(sender, MessageStatus.unread, 1);
+
     }
 }

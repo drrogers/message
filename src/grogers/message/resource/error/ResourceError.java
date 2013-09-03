@@ -3,7 +3,7 @@ package grogers.message.resource.error;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public abstract class ResourceError {
+public abstract class ResourceError extends BaseError {
     String name;
     String id;
 
@@ -30,14 +30,5 @@ public abstract class ResourceError {
             e.printStackTrace();
         }
         return null;
-    }
-    public String toJsonString() {
-        JSONObject json = toJson();
-        String jsonString;
-        if (json == null)
-            jsonString = "{\"message\":\"unknown server error\"}";
-        else
-            jsonString = toJson().toString();
-        return jsonString;
     }
 }

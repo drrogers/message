@@ -3,36 +3,35 @@ package grogers.message.resource.error;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class InvalidValueError extends BaseError {
+public class InvalidResourcePropertyValueError extends ResourceError {
 
-    String name;
+    String propertyName;
     String value;
     
-    public InvalidValueError(String name, String value) {
-        super();
-        this.name = name;
+    public InvalidResourcePropertyValueError(String name, String id, String propertyName, String value) {
+        super(name, id);
+        this.propertyName = propertyName;
         this.value = value;
     }
 
     public JSONObject toJson() {
-        JSONObject json = null;
+        JSONObject json = super.toJson();
         try {
-            json = new JSONObject();
-            json.put("name", name);
+            json.put("propertyName", propertyName);
             json.put("value", value);
         } catch (JSONException e) {
             // TODO proper Logging....
             e.printStackTrace();
         }
-        return json;
+        return null;
     }
 
     public String getPropertyName() {
-        return name;
+        return propertyName;
     }
 
-    public void setPropertyName(String name) {
-        this.name = name;
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
     }
 
     public String getValue() {

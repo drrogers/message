@@ -46,6 +46,10 @@ public class MessageBean extends BaseCollectionBean {
         this.status = other.status;
     }
     
+    public MessageBean(JSONObject json) throws JSONException {
+        this();
+        fromJson(json);
+    }
 
     public JSONObject toJson() throws JSONException {
         JSONObject json = super.toJson();

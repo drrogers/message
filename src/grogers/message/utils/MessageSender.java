@@ -73,7 +73,7 @@ public class MessageSender {
         MessageBean receiversMessage = new MessageBean(message);
         for (UserBean user : itr) {
             receiversMessage.setId(null);
-            message.setReceiver(new NamedReference(user));
+            receiversMessage.setReceiver(new NamedReference(user));
             receiversMessage.setStatus(MessageStatus.unread);
             mdao.save(receiversMessage);
         }
