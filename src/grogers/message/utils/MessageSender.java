@@ -60,6 +60,7 @@ public class MessageSender {
     
     /*
      * "Send" a unique copy of message to each user that is a member of the message group.
+     * Don't send to sender if also a member.
      */
     void sendToGroup(MessageBean message) throws UnknownHostException {
         Iterable<UserBean> itr = null;
@@ -72,10 +73,12 @@ public class MessageSender {
         MessageDAO mdao = new MessageDAO();
         MessageBean receiversMessage = new MessageBean(message);
         for (UserBean user : itr) {
-            receiversMessage.setId(null);
-            receiversMessage.setReceiver(new NamedReference(user));
-            receiversMessage.setStatus(MessageStatus.unread);
-            mdao.save(receiversMessage);
+            if (!user.getId().equals(message.getSender().getId())) {
+                receiversMessage.setId(null);
+                receiversMessage.setReceiver(new NamedReference(user));
+                receiversMessage.setStatus(MessageStatus.unread);
+                mdao.save(receiversMessage);
+            }
         }
     }
 }

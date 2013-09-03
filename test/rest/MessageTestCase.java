@@ -15,7 +15,9 @@ import org.json.JSONException;
 
 public class MessageTestCase extends BaseTestCase {
     
-    // Not so much a test case as a test scenario....
+    // TODO: write more isolated test cases for message sending, searching, and status updating
+    
+    // Not so much a test case as a big test scenario....
     public void testSending() throws JSONException {
         // Create users and group
         UserBean receiver = createUser();
@@ -48,9 +50,28 @@ public class MessageTestCase extends BaseTestCase {
         assertEquals(MessageStatus.sent, message2.getStatus());
 
         // Search for messages for the receivers to validate delivery.
-        List<MessageBean> messages = searchMessages(receiver, MessageStatus.unread, 1);
-        messages = searchMessages(groupReceiver, MessageStatus.unread, 1);
-        messages = searchMessages(sender, MessageStatus.unread, 1);
+        List<MessageBean> receiverMessages = searchMessages(receiver, MessageStatus.unread, 1);
+        List<MessageBean> groupReceiverMessages = searchMessages(groupReceiver, MessageStatus.unread, 1);
+        List<MessageBean> senderMessages = searchMessages(sender, MessageStatus.unread, 0);
 
+        // check receivers message lifecycle
+        searchMessages(receiver, MessageStatus.read, 0);
+        searchMessages(receiver, MessageStatus.deleted, 0);
+        
+        MessageBean msg = receiverMessages.get(0);
+        msg.setStatus(MessageStatus.read);
+        updateMessage(msg, Status.OK.getStatusCode());
+        searchMessages(receiver, MessageStatus.unread, 0);
+        searchMessages(receiver, MessageStatus.read, 1);
+        searchMessages(receiver, MessageStatus.deleted, 0);
+        
+        msg.setStatus(MessageStatus.deleted);
+        updateMessage(msg, Status.OK.getStatusCode());
+        searchMessages(receiver, MessageStatus.unread, 0);
+        searchMessages(receiver, MessageStatus.read, 0);
+        searchMessages(receiver, MessageStatus.deleted, 1);
+        
+        // receiver didn't impact groupReceiver?
+        searchMessages(groupReceiver, MessageStatus.unread, 1);
     }
 }
