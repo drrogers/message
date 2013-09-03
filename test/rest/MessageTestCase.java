@@ -50,28 +50,47 @@ public class MessageTestCase extends BaseTestCase {
         assertEquals(MessageStatus.sent, message2.getStatus());
 
         // Search for messages for the receivers to validate delivery.
-        List<MessageBean> receiverMessages = searchMessages(receiver, MessageStatus.unread, 1);
-        List<MessageBean> groupReceiverMessages = searchMessages(groupReceiver, MessageStatus.unread, 1);
-        List<MessageBean> senderMessages = searchMessages(sender, MessageStatus.unread, 0);
+        List<MessageBean> receiverMessages = searchMessages(null, receiver, MessageStatus.unread, 0, 20, 1);
+        List<MessageBean> groupReceiverMessages = searchMessages(null, groupReceiver, MessageStatus.unread, 0, 20, 1);
+        List<MessageBean> senderMessages = searchMessages(null, sender, MessageStatus.unread, 0, 20, 0);
 
         // check receivers message lifecycle
-        searchMessages(receiver, MessageStatus.read, 0);
-        searchMessages(receiver, MessageStatus.deleted, 0);
+        searchMessages(null, receiver, MessageStatus.read, 0, 20, 0);
+        searchMessages(null, receiver, MessageStatus.deleted, 0, 20, 0);
         
         MessageBean msg = receiverMessages.get(0);
         msg.setStatus(MessageStatus.read);
         updateMessage(msg, Status.OK.getStatusCode());
-        searchMessages(receiver, MessageStatus.unread, 0);
-        searchMessages(receiver, MessageStatus.read, 1);
-        searchMessages(receiver, MessageStatus.deleted, 0);
+        searchMessages(null, receiver, MessageStatus.unread, 0, 20, 0);
+        searchMessages(null, receiver, MessageStatus.read, 0, 20, 1);
+        searchMessages(null, receiver, MessageStatus.deleted, 0, 20, 0);
         
         msg.setStatus(MessageStatus.deleted);
         updateMessage(msg, Status.OK.getStatusCode());
-        searchMessages(receiver, MessageStatus.unread, 0);
-        searchMessages(receiver, MessageStatus.read, 0);
-        searchMessages(receiver, MessageStatus.deleted, 1);
+        searchMessages(null, receiver, MessageStatus.unread, 0, 20, 0);
+        searchMessages(null, receiver, MessageStatus.read, 0, 20, 0);
+        searchMessages(null, receiver, MessageStatus.deleted, 0, 20, 1);
         
         // receiver didn't impact groupReceiver?
-        searchMessages(groupReceiver, MessageStatus.unread, 1);
+        searchMessages(null, groupReceiver, MessageStatus.unread, 0, 20, 1);
+    }
+    
+    // Not so much a test case as a big test scenario....
+    public void testPaging() throws JSONException {
+        // Create users and group
+        UserBean u1 = createUser();
+        UserBean u2 = createUser();
+        
+        createMessage(u1, u2, null, MessageBean.MessageStatus.send, "wassup?", Status.OK.getStatusCode());
+        createMessage(u1, u2, null, MessageBean.MessageStatus.send, "I know you're out there. I can hear you breathing.", Status.OK.getStatusCode());
+        createMessage(u1, u2, null, MessageBean.MessageStatus.send, "Why don't you answer me?", Status.OK.getStatusCode());
+        createMessage(u1, u2, null, MessageBean.MessageStatus.send, "I really can't keep this up...", Status.OK.getStatusCode());
+        createMessage(u1, u2, null, MessageBean.MessageStatus.send, "Screw you guy's, I'm going home.", Status.OK.getStatusCode());
+
+        searchMessages(null, u2, MessageStatus.unread, 0, 20, 5);
+        searchMessages(null, u2, MessageStatus.unread, 0, 2, 2);
+        searchMessages(null, u2, MessageStatus.unread, 2, 10, 3);
+        searchMessages(null, u2, MessageStatus.unread, 5, 10, 0);
+        
     }
 }

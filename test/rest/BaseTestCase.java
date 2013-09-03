@@ -213,11 +213,15 @@ public abstract class BaseTestCase extends TestCase {
         return (MessageBean) getBeanById(MessageBean.class, "message", id, expectedStatus);
     }
     
-    public List<MessageBean> searchMessages(UserBean receiver, MessageStatus status, int expectedMessageCount) throws JSONException {
+    public List<MessageBean> searchMessages(UserBean sender, UserBean receiver, MessageStatus status, int offset, int limit, int expectedMessageCount) throws JSONException {
         WebTarget wt = webTarget.path("message/search").queryParam("userId", receiver.getId().toString());
+        if (sender != null)
+            wt = wt.queryParam("senderId", sender.getId().toString());
         if (status != null) {
             wt = wt.queryParam("status", status.toString());
         }
+        wt = wt.queryParam("offset", offset);
+        wt = wt.queryParam("limit", limit);
         
         Response response = wt.request(MediaType.APPLICATION_JSON).get(Response.class);
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
@@ -232,7 +236,9 @@ public abstract class BaseTestCase extends TestCase {
             assertEquals(status.toString(), json.getString("status"));
         }
         assertTrue(json.has("messages"));
-        assertEquals(expectedMessageCount, json.getJSONArray("messages").length());
+        int nMessages = json.getJSONArray("messages").length();
+        assertEquals(expectedMessageCount, nMessages);
+        assertTrue("received more messages, " + nMessages + ", than limit " + limit, nMessages <= limit);
         
         JSONArray jsonMessages = json.getJSONArray("messages"); 
         List<MessageBean> messages = Lists.newArrayList();

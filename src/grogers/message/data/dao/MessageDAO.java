@@ -23,13 +23,27 @@ public class MessageDAO extends BaseDAO<MessageBean,ObjectId> {
 
     /**
      * Returns list of MessageBeans that match the input criteria.
+     * @param sender TODO
      * @param receiver
+     * @param status - optional, null means any
+     * @param offset TODO
+     * @param limit TODO
      * @return
      */
-    public List<MessageBean> search(UserBean receiver, MessageStatus status) {
-        Query<MessageBean> query = ds.createQuery(MessageBean.class)
-                .field("receiver._id").equal(receiver.getId())
-                .field("status").equal(status);
+    public List<MessageBean> search(UserBean sender, UserBean receiver, MessageStatus status, int offset, int limit) {
+        Query<MessageBean> query = ds.createQuery(MessageBean.class);
+        
+        if (sender != null)
+            query = query.field("sender._id").equal(sender.getId());
+        
+        if (receiver != null)
+            query = query.field("receiver._id").equal(receiver.getId());
+        
+        if (status != null)
+            query = query.field("status").equal(status);
+
+        query.offset(offset);
+        query.limit(limit);
         
         List<MessageBean> messages = query.asList();
         return messages;

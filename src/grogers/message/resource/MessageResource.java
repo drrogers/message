@@ -13,6 +13,7 @@ import grogers.message.utils.MessageSender;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -69,7 +70,11 @@ public class MessageResource extends BaseResource {
 
     /**
      * Search for messages with various filters.  E.g. the inbox
-     * @param userId - receiver of messages
+     * @param userId - receiver of messages - required
+     * @param senderId - sender of messages - optional
+     * @param status - MessageStatus when not specified all status match
+     * @param offset - paging control
+     * @param limit - maximum number of message to return
      * @return JSON that includes input filter settings and output list of matching messages.
      * @throws UnknownHostException
      * @throws JSONException
@@ -77,27 +82,43 @@ public class MessageResource extends BaseResource {
     @GET
     @Path("search")
     @Produces({MediaType.APPLICATION_JSON})
-    public String search(@QueryParam("userId") String userId, 
-                        @QueryParam("status") String status) throws UnknownHostException, JSONException {
-        // TODO: add offset, limit, sender, etc.
-        // TODO: after login required, userId should be matched against user in session and only allowed
+    public String search(@QueryParam("userId") String userId,
+                        @QueryParam("senderId") String senderId,
+                        @QueryParam("status") String status,
+                        @QueryParam("offset") @DefaultValue("0") int offset,
+                        @QueryParam("limit") @DefaultValue("20") int limit) throws UnknownHostException, JSONException {
+        // TODO: 1. Offset and limit are not enough, new messages arrive all the time and distort this unless reading from oldest to newest.
+        // TODO: for newest to oldest need timestamp of first message returned from initial search.
+        // TODO: 2. After login required, userId should be matched against user in session and only allowed
         // TODO: access when they match or session user has sufficient privileges.
+        UserDAO udao = new UserDAO();
         ObjectId id = newObjectId("user", userId);
-        UserBean user = new UserDAO().get(id);
-        assertFound(user, userId);
+        UserBean receiver = udao.get(id);
+        assertFound(receiver, userId);
+
+        UserBean sender = null;
+        if (senderId != null) {
+            sender = udao.get(newObjectId("user", senderId));
+        }
         
         MessageStatus msgStatus = validMessageStatus(status);
         
-        List<MessageBean> messages = new MessageDAO().search(user, msgStatus);
+        List<MessageBean> messages = new MessageDAO().search(sender, receiver, msgStatus, offset, limit);
+        
         JSONObject json = new JSONObject();
         JSONArray jsonMessages = new JSONArray();
         for (MessageBean message : messages) {
             jsonMessages.put(message.toJson());
         }
         json.put("messages", jsonMessages);
-        json.put("receiver", new NamedReference(user).toJson());
+        if (sender != null)
+            json.put("sender", new NamedReference(sender).toJson());
+        if (receiver != null)
+            json.put("receiver", new NamedReference(receiver).toJson());
         if (msgStatus != null)
             json.put("status", msgStatus.toString());
+        json.put("offset", offset);
+        json.put("limit", limit);
         return json.toString();
     }
 
