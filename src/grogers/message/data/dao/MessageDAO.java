@@ -11,7 +11,6 @@ import org.bson.types.ObjectId;
 import com.google.code.morphia.query.Query;
 import com.google.code.morphia.query.UpdateOperations;
 import com.google.code.morphia.query.UpdateResults;
-import com.mongodb.QueryOperators;
 
 
 public class MessageDAO extends BaseDAO<MessageBean,ObjectId> {

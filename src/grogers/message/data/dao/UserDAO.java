@@ -1,6 +1,5 @@
 package grogers.message.data.dao;
 
-import grogers.message.data.GroupBean;
 import grogers.message.data.UserBean;
 import grogers.message.utils.MongoUtils;
 
