@@ -6,9 +6,12 @@ import grogers.message.data.BaseBean;
 import grogers.message.resource.error.InvalidResourceIdError;
 import grogers.message.resource.error.ResourceNotFoundError;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,10 +19,28 @@ import org.json.JSONObject;
 
 
 
+
 public abstract class BaseResource {
+    @Context HttpServletRequest httpServletRequest;
+
     public String getResourceName() {
         return "unknown";
     }
+
+    protected String logRequestString(String message) {
+        StringBuffer buf = httpServletRequest.getRequestURL();
+        String query = httpServletRequest.getQueryString();
+        if (query != null)
+            buf.append("?").append(query);
+        buf.append(", ").append(httpServletRequest.getMethod());
+        if (message != null)
+            buf.append(", ").append(message);
+        return buf.toString();
+    }
+    protected String logRequestString() {
+        return logRequestString(null);
+    }
+    
 
     /**
      * Test bean for null.

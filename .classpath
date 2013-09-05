@@ -16,5 +16,6 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="/Users/greg/Documents/workspace/message/external/hamcrest-core-1.3.jar"/>
 	<classpathentry kind="lib" path="/Users/greg/Documents/workspace/message/external/junit-4.11.jar"/>
+	<classpathentry kind="lib" path="/Users/greg/Documents/workspace/message/external/javax.servlet-api-3.0.1.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

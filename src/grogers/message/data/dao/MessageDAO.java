@@ -23,11 +23,11 @@ public class MessageDAO extends BaseDAO<MessageBean,ObjectId> {
 
     /**
      * Returns list of MessageBeans that match the input criteria.
-     * @param sender TODO
+     * @param sender
      * @param receiver
      * @param status - optional, null means any
-     * @param offset TODO
-     * @param limit TODO
+     * @param offset
+     * @param limit
      * @return
      */
     public List<MessageBean> search(UserBean sender, UserBean receiver, MessageStatus status, int offset, int limit) {

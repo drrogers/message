@@ -13,6 +13,7 @@ import grogers.message.utils.MessageSender;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -22,9 +23,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
+import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +40,8 @@ import com.mongodb.MongoException;
 
 @Path("/message")
 public class MessageResource extends BaseResource {
+    static Logger log = Logger.getLogger(UserResource.class);
+
     public String getResourceName() {
         return "message";
     }
@@ -62,6 +69,10 @@ public class MessageResource extends BaseResource {
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public String getMessage(@PathParam("id") String id) throws UnknownHostException, JSONException {
+//        HttpServletRequest hsr = (HttpServletRequest)request;
+//        String fullURL = hsr.getRequestURL().append(hsr.getQueryString()).toString();
+//        log.info("GET " + getResourceName() + "/" + id);
+        log.info(logRequestString("getMessage"));
         ObjectId objectId = newObjectId(id);
         MessageBean message = new MessageDAO().get(objectId);
         assertFound(message, id);
@@ -91,6 +102,7 @@ public class MessageResource extends BaseResource {
         // TODO: for newest to oldest need timestamp of first message returned from initial search.
         // TODO: 2. After login required, userId should be matched against user in session and only allowed
         // TODO: access when they match or session user has sufficient privileges.
+        log.info(logRequestString());
         UserDAO udao = new UserDAO();
         ObjectId id = newObjectId("user", userId);
         UserBean receiver = udao.get(id);
@@ -125,6 +137,7 @@ public class MessageResource extends BaseResource {
     @POST
     @Produces({MediaType.APPLICATION_JSON})
     public String createMessage(String jsonData) throws UnknownHostException, JSONException {
+        log.info(logRequestString("json: " + jsonData));
         JSONObject json = null;
         try {
             MessageBean message = new MessageBean();
@@ -153,6 +166,8 @@ public class MessageResource extends BaseResource {
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public String updateMessage(String jsonData, @PathParam("id") String id) throws UnknownHostException, JSONException {
+        log.info(logRequestString("json: " + jsonData));
+
         try {
             ObjectId objectId = newObjectId(id);
             MessageDAO dao = new MessageDAO();

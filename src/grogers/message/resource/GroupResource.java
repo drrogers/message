@@ -14,6 +14,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 import org.json.JSONException;
 
@@ -22,6 +23,8 @@ import com.mongodb.MongoException;
 
 @Path("/group")
 public class GroupResource extends BaseResource {
+    static Logger log = Logger.getLogger(UserResource.class);
+
     public String getResourceName() {
         return "group";
     }
@@ -30,6 +33,7 @@ public class GroupResource extends BaseResource {
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public String getGroup(@PathParam("id") String id) throws UnknownHostException, JSONException {
+        log.info(logRequestString());
         ObjectId objectId = newObjectId(id);
         GroupBean group = new GroupDAO().get(objectId);
         assertFound(group, id);
@@ -39,6 +43,8 @@ public class GroupResource extends BaseResource {
     @POST
     @Produces({MediaType.APPLICATION_JSON})
     public String registoreGroup(String jsonData) throws UnknownHostException, JSONException {
+        log.info(logRequestString("json: " + jsonData));
+
         try {
             GroupBean group = new GroupBean();
             group.fromJson(jsonData);

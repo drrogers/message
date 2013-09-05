@@ -36,9 +36,11 @@ public abstract class BaseTestCase extends TestCase {
     @Before
     public void setUp() {
         config = new ClientConfig();
-        
+        // TODO: this should come from properties
         client = ClientBuilder.newClient(config);
-        webTarget = client.target("http://localhost:8080/grogers.message/rest");
+//        String host = "http://ec2-54-200-9-5.us-west-2.compute.amazonaws.com:8080/message/rest";
+        String host = "http://localhost:8080/grogers.message/rest";
+        webTarget = client.target(host);
     }
     
     protected BaseBean updateBean(Class cls, String resourceName, BaseBean bean, int expectedStatus) throws JSONException {
