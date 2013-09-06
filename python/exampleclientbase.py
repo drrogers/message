@@ -1,6 +1,7 @@
 
 import base64
 import httplib2
+import urllib
 import json
 import os
 import random
@@ -44,6 +45,24 @@ class ExampleClientBase(object):
         v = self.randomInt(1, 10**(n-1))
         return (('0'*n)+str(v))[-n:]
         
+    def _optionalJson(self, json, name, value):
+        if (value is not None):
+            json[name] = value
+        return json
+
+    def _requiredJson(self, json, name, value):
+        if (value is None):
+            raise ValueError(name + " required")
+        json[name] = value
+        return json
+    
+    def _queryParams(self, **kwargs):
+        params = {}
+        for arg, v in kwargs.iteritems():
+            if v is not None:
+                params[arg] = v
+        return urllib.urlencode(params)
+    
     def postJson(self, url, jsonDict):
         jsonStr = json.dumps(jsonDict)
         response, responseContent = self.sendRequest(url, jsonStr, contentType="application/json", method="POST") 
@@ -116,7 +135,8 @@ class ExampleClientBase(object):
         elif self.baseUrl.startswith("https:") and url.startswith(self.baseUrl.replace("https:", "http:", 1)):
             url = url.replace("http:", "https:")
         
-        print '#'*10, 'request:', url
+        if self.verbose:
+            print '#'*10, 'request:', url
 
         response, responseContent = http.request(url, "POST", headers=headers, body=buffer(content))
         

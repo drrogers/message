@@ -247,7 +247,7 @@ public abstract class BaseTestCase extends TestCase {
     }
     
     public List<MessageBean> searchMessages(UserBean sender, UserBean receiver, MessageStatus status, int offset, int limit, int expectedMessageCount) throws JSONException {
-        WebTarget wt = webTarget.path("message/search").queryParam("userId", receiver.getId().toString());
+        WebTarget wt = webTarget.path("message/search").queryParam("receiverId", receiver.getId().toString());
         if (sender != null)
             wt = wt.queryParam("senderId", sender.getId().toString());
         if (status != null) {

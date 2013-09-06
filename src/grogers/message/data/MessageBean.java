@@ -41,7 +41,7 @@ public class MessageBean extends BaseCollectionBean {
         if (other.getSender() != null)
             this.sender = new NamedReference(other.getSender());
         if (other.getGroup() != null)
-            this.sender = new NamedReference(other.getGroup());
+            this.group = new NamedReference(other.getGroup());
         this.content = other.content;
         this.status = other.status;
     }

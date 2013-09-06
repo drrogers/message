@@ -77,7 +77,7 @@ public class MessageResource extends BaseResource {
 
     /**
      * Search for messages with various filters.  E.g. the inbox
-     * @param userId - receiver of messages - required
+     * @param receiverId - receiver of messages - required
      * @param senderId - sender of messages - optional
      * @param status - MessageStatus when not specified all status match
      * @param offset - paging control
@@ -89,7 +89,7 @@ public class MessageResource extends BaseResource {
     @GET
     @Path("search")
     @Produces({MediaType.APPLICATION_JSON})
-    public String search(@QueryParam("userId") String userId,
+    public String search(@QueryParam("receiverId") String receiverId,
                         @QueryParam("senderId") String senderId,
                         @QueryParam("status") String status,
                         @QueryParam("offset") @DefaultValue("0") int offset,
@@ -100,9 +100,9 @@ public class MessageResource extends BaseResource {
         // TODO: access when they match or session user has sufficient privileges.
         log.info(logRequestString());
         UserDAO udao = new UserDAO();
-        ObjectId id = newObjectId("user", userId);
+        ObjectId id = newObjectId("user", receiverId);
         UserBean receiver = udao.get(id);
-        assertFound(receiver, userId);
+        assertFound(receiver, receiverId);
 
         UserBean sender = null;
         if (senderId != null) {
@@ -169,6 +169,8 @@ public class MessageResource extends BaseResource {
             MessageDAO dao = new MessageDAO();
             MessageBean message = dao.get(objectId);
             assertFound(message, id);
+
+            // TODO: validate authenticated user has rights to change message (ie. sender of draft/sent, or receiver)
 
             // put not allowed to change id
             JSONObject json = new JSONObject(jsonData);
