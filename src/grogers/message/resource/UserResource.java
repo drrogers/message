@@ -32,6 +32,17 @@ public class UserResource extends BaseResource {
     }
 
     @GET
+    @Path("name/{loginName}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public String getUserByName(@PathParam("loginName") String loginName) throws UnknownHostException, JSONException {
+        log.info(logRequestString());
+        UserBean user = new UserDAO().getByName(loginName);
+        assertFound(user, loginName);
+        return user.toJsonString();
+    }
+
+    
+    @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public String getUser(@PathParam("id") String id) throws UnknownHostException, JSONException {

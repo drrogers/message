@@ -101,6 +101,31 @@ public abstract class BaseTestCase extends TestCase {
         return bean;
     }
 
+    protected BaseBean getBeanByName(Class cls, String resourceName, String name, int expectedStatus) throws JSONException {
+        Response response = webTarget.path(resourceName).path("name").path(name)
+                .request(MediaType.APPLICATION_JSON)
+                .get(Response.class);
+
+        assertEquals(expectedStatus, response.getStatus());
+        BaseBean bean = null;
+        try {
+            bean = (BaseBean)cls.newInstance();
+            if (Status.OK.getStatusCode() == expectedStatus) {
+                String content = response.readEntity(String.class);
+                JSONObject jsonResponse = new JSONObject(content);
+                bean.fromJson(jsonResponse);
+            }
+        } catch (InstantiationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            fail();
+        } catch (IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            fail();
+        }
+        return bean;
+    }
     
     protected GroupBean createGroup(String name, int expectedStatus) throws JSONException {
         GroupBean group = new GroupBean(); 
@@ -136,6 +161,9 @@ public abstract class BaseTestCase extends TestCase {
         return (GroupBean) getBeanById(GroupBean.class, "group", id, expectedStatus);
     }
 
+    protected GroupBean getGroupByName(String name, int expectedStatus) throws JSONException {
+        return (GroupBean) getBeanByName(GroupBean.class, "group", name, expectedStatus);
+    }
     
     protected UserBean createUser(String loginName, int expectedStatus) throws JSONException {
         UserBean user = new UserBean(); 
@@ -172,6 +200,9 @@ public abstract class BaseTestCase extends TestCase {
     }
     public UserBean getUserById(ObjectId id, int expectedStatus) throws JSONException {
         return (UserBean) getBeanById(UserBean.class, "user", id, expectedStatus);
+    }
+    public UserBean getUserByName(String name, int expectedStatus) throws JSONException {
+        return (UserBean) getBeanByName(UserBean.class, "user", name, expectedStatus);
     }
 
     

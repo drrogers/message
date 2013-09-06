@@ -1,17 +1,16 @@
 package grogers.message.resource;
 
-import java.util.List;
-
 import grogers.message.data.BaseBean;
 import grogers.message.resource.error.InvalidResourceIdError;
 import grogers.message.resource.error.ResourceNotFoundError;
+
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -18,6 +18,16 @@ public class UserDAO extends BaseDAO<UserBean, ObjectId> {
     }
 
     /**
+     * Find user by name
+     */
+    public UserBean getByName( String name ) {
+        Query<UserBean> query = ds.createQuery(UserBean.class);
+        query = query.field("loginName").equal(name);
+        UserBean user = query.get();
+        return user;
+    }
+    
+    /**
      * Return an Iterable over Users that are members of the optionally specified group.
      * @param groupId
      * @return

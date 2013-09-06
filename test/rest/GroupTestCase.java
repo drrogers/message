@@ -26,6 +26,15 @@ public class GroupTestCase extends BaseTestCase {
         assertEquals(group.getId(), group2.getId());
         assertEquals(group.getName(), group2.getName());
     }
+
+    public void testGetByNameHappyPath() throws JSONException {
+        GroupBean group = createGroup();
+        GroupBean group2 = getGroupByName(group.getName(), Status.OK.getStatusCode());
+        
+        assertEquals(group.getId(), group2.getId());
+        assertEquals(group.getName(), group2.getName());
+    }
+
     public void testGetNotFound() throws JSONException {
         getGroupById(new ObjectId(), Status.NOT_FOUND.getStatusCode());
         

@@ -1,7 +1,9 @@
 package grogers.message.resource;
 
 import grogers.message.data.GroupBean;
+import grogers.message.data.UserBean;
 import grogers.message.data.dao.GroupDAO;
+import grogers.message.data.dao.UserDAO;
 
 import java.net.UnknownHostException;
 
@@ -29,6 +31,16 @@ public class GroupResource extends BaseResource {
         return "group";
     }
     
+    @GET
+    @Path("name/{name}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public String getUserByName(@PathParam("name") String name) throws UnknownHostException, JSONException {
+        log.info(logRequestString());
+        GroupBean group = new GroupDAO().getByName(name);
+        assertFound(group, name);
+        return group.toJsonString();
+    }
+
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})

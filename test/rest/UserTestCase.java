@@ -16,6 +16,12 @@ public class UserTestCase  extends BaseTestCase {
         createUser(); 
     }
 
+    public void testGetByName() throws JSONException {
+        UserBean user = createUser();
+        UserBean user2 = getUserByName(user.getLoginName(), Status.OK.getStatusCode());
+        assertEquals(user.getId(), user2.getId());
+    }
+
     public void testRegistrationDuplicate() throws JSONException {
         UserBean user = createUser();
         createUser(user.getLoginName(), Status.CONFLICT.getStatusCode());
