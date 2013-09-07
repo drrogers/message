@@ -64,7 +64,8 @@ public class MessageSender {
      */
     void sendToGroup(MessageBean message) throws UnknownHostException {
         Iterable<UserBean> itr = null;
-        if (message.getGroup() == null)
+        if (message.getGroup().getName().equals("all"))
+            // get all users
             itr = new UserDAO().getGroupMembers(null);
         else
             itr = new UserDAO().getGroupMembers(message.getGroup().getId());
