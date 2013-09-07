@@ -1,9 +1,7 @@
 package grogers.message.resource;
 
 import grogers.message.data.GroupBean;
-import grogers.message.data.UserBean;
 import grogers.message.data.dao.GroupDAO;
-import grogers.message.data.dao.UserDAO;
 
 import java.net.UnknownHostException;
 

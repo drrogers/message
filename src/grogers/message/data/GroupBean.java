@@ -13,7 +13,7 @@ import com.google.code.morphia.annotations.Indexes;
  * Membership is recorded via User references back to the Group.
  * 
  */
-@Entity(value="group", noClassnameStored=true)
+@Entity(value="groups", noClassnameStored=true)
 @Indexes( {@Index(value="name", name="group_name", unique=true) } )
 public class GroupBean extends BaseCollectionBean {
     String name;

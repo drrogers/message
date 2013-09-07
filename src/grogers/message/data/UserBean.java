@@ -14,7 +14,7 @@ import com.google.common.collect.Sets;
 
 /** Basic user profile.
  */
-@Entity(value="user", noClassnameStored=true)
+@Entity(value="users", noClassnameStored=true)
 @Indexes( {@Index(value="loginName", name="user_login", unique=true) } )
 public class UserBean extends BaseCollectionBean {
 

@@ -9,7 +9,7 @@ import com.google.code.morphia.annotations.Index;
 import com.google.code.morphia.annotations.Indexes;
 
 
-@Entity(value="message", noClassnameStored=true)
+@Entity(value="messages", noClassnameStored=true)
 @Indexes( {@Index(value="receiver.id,status,-createdAt", name="message_receiverid_status_createdat") } )
 public class MessageBean extends BaseCollectionBean {
 
